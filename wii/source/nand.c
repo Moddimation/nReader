@@ -81,8 +81,8 @@ static int getNandSerial(char *serial) {
             key = (key << 1) | (key >> 31);
         }
     }
-    char code[16]  = {0};
-    char serno[16] = {0};
+    char code[4]  = {0};
+    char serno[10] = {0};
     const char *keys[]  = { "CODE", "SERNO" };
     char *outs[]        = { code, serno };
     u32 outSizes[]      = { sizeof(code), sizeof(serno) };

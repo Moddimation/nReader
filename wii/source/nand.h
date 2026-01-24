@@ -15,7 +15,7 @@ typedef struct {
 
 typedef struct {
     char username[32];
-    char serial[32];
+    char serial[13];
     nandEntry *entries;
     u32 count;
 } nandReport;
