@@ -32,8 +32,22 @@ int main(void) {
     printf("Your report is available at:\nhttps://nreader.eu/pages/nand.php?nand=%s", report.serial);
     videoWait(55);
     
-    puts("\nThanks you for contributing to Wii history preservation!\nExiting...");
-    videoWait(275);
+    puts("\nThanks you for contributing to Wii history preservation!...\n\nPress RESET, HOME or START to exit.");
+    // wait
+    while (1) {
+        WPAD_ScanPads();
+        PAD_ScanPads();
+
+        u32 pressedWii = WPAD_ButtonsDown(0);
+        u32 pressedGC = PAD_ButtonsDown(0);
+
+        if ((pressedWii & WPAD_BUTTON_HOME) || (pressedGC & PAD_BUTTON_START) || SYS_ResetButtonDown()) {
+            break;
+        }
+
+        VIDEO_WaitVSync();
+    }
+
     return 0;
 
 }
