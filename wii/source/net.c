@@ -70,6 +70,9 @@ int netInit(void) {
     char localip[16] = {0};
     char netmask[16] = {0};
     char gateway[16] = {0};
+    ret = net_init();
+    if (ret < 0)
+        return -200;
     ret = if_config(localip, netmask, gateway, true, 20);
     if (ret < 0)
         return -201;
@@ -91,7 +94,9 @@ int netInit(void) {
     return 0;
 }
 
-int netUpload(const nandReport *report) {
+static char lastResponse[1024];
+
+static int netUploadImpl(const nandReport *report) {
     const char *host = "nreader.eu";
     const char *path = "/pages/upload.php";
     const int port = 80;
@@ -129,16 +134,28 @@ int netUpload(const nandReport *report) {
         net_close(sock);
         return -211;
     }
-    char recvBuf[1024];
-    int ret = net_recv(sock, recvBuf, sizeof(recvBuf) - 1, 0);
-    if (ret < 0) {
+    int bytes = net_recv(sock, lastResponse, sizeof(lastResponse) - 1, 0);
+    if (bytes < 0) {
         net_close(sock);
         return -212;
     }
-    recvBuf[ret] = '\0';
+    lastResponse[bytes] = '\0';
     net_close(sock);
-    if (strstr(recvBuf, "\"success\":true") == NULL) {
-        return -211;
+
+    if (strstr(lastResponse, "\"success\":true") == NULL) {
+        if (strstr(lastResponse, "HTTP/1.1 500") != NULL)
+            return -213;
+        if (strstr(lastResponse, "HTTP/1.1 404") != NULL)
+            return -214;
+        return -215;
     }
     return 0;
+}
+
+int netUpload(const nandReport *report) {
+    int res = netUploadImpl(report);
+    if (res != 0) {
+        printf("\n--- ERROR REPORT (%d) ---\n%s\n-------------\n", res, lastResponse);
+    }
+    return res;
 }

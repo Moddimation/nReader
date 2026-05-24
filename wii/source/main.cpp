@@ -6,37 +6,33 @@
 #include "nand.h"
 #include "net.h"
 
-// definitions
-#define DEBUG_MODE false
-
-// main
 int main(void) {
     videoInit();
-    std::cout << "(C) 2026 hediibl\nLicensed under the MIT\nRunning on IOS" << IOS_GetVersion() << "v" << IOS_GetRevision() << "\n\n";
+    printf("(C) 2026 hediibl\nLicensed under the MIT\nRunning on IOS%d v%d\n\n", IOS_GetVersion(), IOS_GetRevision());
 
-    if (!DEBUG_MODE) {
-        std::cout << "Initializing NAND...";
+#if 1
+        printf("Initializing NAND...");
         executeHandler(nandInit);
-    }
+#endif
 
     videoWait(55);
 
-    std::cout << "Initializing network...";
+    printf("Initializing network...");
     executeHandler(netInit);
     videoWait(55);
 
-    std::cout << "Reading NAND...";
+    printf("Reading NAND...");
     nandReport report = {};
     executeHandler(nandRead, &report);
-    std::cout << "Found " << report.count << " entries.\n";
+    printf("Found %d entries.\n", report.count);
     videoWait(55);
 
-    std::cout << "Uploading report...";
+    printf("Uploading report...");
     executeHandler(netUpload, &report);
-    std::cout << "Your report is available at:\nhttps://nreader.eu/pages/nand.php?nand=" << report.serial;
+    printf("Your report is available at:\nhttps://nreader.eu/pages/nand.php?nand=%s", report.serial);
     videoWait(55);
     
-    std::cout << "\nThanks you for contributing to Wii history preservation!\nExiting...";
+    puts("\nThanks you for contributing to Wii history preservation!\nExiting...");
     videoWait(275);
     return 0;
 

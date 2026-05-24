@@ -30,7 +30,7 @@ void videoInit(void) {
         VIDEO_WaitVSync();
     colsOnScreen = (rmode->fbWidth - padding) / FONT_WIDTH;
     linesOnScreen = (rmode->xfbHeight - padding) / FONT_HEIGHT;
-    printf("nReader 2.5\n");
+    puts("nReader 2.6\n");
     for (int i = 0; i < colsOnScreen; i++)
         putchar('-');
     putchar('\n');

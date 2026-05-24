@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <app version="1">
     <name>nReader</name>
-    <version>2.5</version>
+    <version>2.6</version>
     <author>hediibl</author>
     <short_description>Wii NAND Report Tool</short_description>
     <long_description>Generates a detailed report of your Wii NAND history on a public database.</long_description>

@@ -8,16 +8,16 @@ extern "C" {
 #include <gccore.h>
 
 typedef struct {
-    char id[18];
-    char title[16];
-    char ticket[4];
+    char id[32];
+    char title[32];
+    char ticket[8];
 } nandEntry;
 
 typedef struct {
-    char username[32];
-    char serial[13];
-    nandEntry *entries;
+    char serial[17];
+    char username[33];
     u32 count;
+    nandEntry *entries;
 } nandReport;
 
 int nandInit(void);
