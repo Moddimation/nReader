@@ -1,4 +1,4 @@
-# nReader 2.5
+# nReader 2.6
 
 Author: hediibl
 
@@ -6,38 +6,18 @@ Author: hediibl
 
 ## Description
 
-**nReader** is a tool for analyzing the history of a Nintendo Wii NAND.
-It generates a detailed report by cross-checking `/sys/uid.sys` and the current `/title` and `/ticket` directories, allowing users to understand what has been installed, removed, or left behind over time.
-The report is then uploaded to a public database to be processed later.
+**nReader** is a tool for analyzing the history of a Nintendo Wii NAND.  
+It generates a detailed report by cross-checking `/sys/uid.sys` and the current `/title` and `/ticket` directories, allowing users to understand what has been installed, removed, or left behind over time.  
+The report is then uploaded to a public database to be processed later.  
 
-The report includes:
+The report includes:  
 
 * ID;
 * Game ID;
 * Type;
-* Name;
+* Uploader Name (Not console);
 * Current version;
 * Ticket presence.
-
----
-
-## Distributions
-
-nReader is available in two independent versions:
-
-### 1. Console version
-
-* **Language:** C/C++
-* **Files:** `boot.elf` / `boot.dol`
-* **License:** MIT License
-* **Functionality:** Automatically uploads raw console data to the server.
-
-### 2. Desktop version
-
-* **Language:** Python 3
-* **Files:** `nReader.py` (`nReader.exe` for Windows only)
-* **License:** GNU General Public License v3.0 (GPL-3.0)
-* **Functionality:** Offers to display the report, save it locally and/or upload it to the server. Allows forcing a serial number that is different from the NAND one, as well as providing a description. Intended for advanced users and for specific NANDs.
 
 ---
 
@@ -71,6 +51,7 @@ pip install pycryptodome wcwidth requests
 
 ### Wii version
 
+You need the app to be placed in apps/nReader, and inside that folder is a name.txt. This is your name.  
 Launch the `.elf` / `.dol` executable through any exploit/the Homebrew Channel.
 
 ### Python version
@@ -84,6 +65,26 @@ python nReader.py nandPath [--useKeys keysPath] [--localSave] [--shareOnline] [-
 ```
 nReader.exe nandPath [--useKeys keysPath] [--localSave] [--shareOnline] [--forceSerial serialNumber] [--addDescription "description"]
 ```
+
+---
+
+## Distributions
+
+nReader is available in two independent versions:
+
+### 1. Console version
+
+* **Language:** C/C++
+* **Files:** `boot.elf` / `boot.dol`
+* **License:** MIT License
+* **Functionality:** Automatically uploads raw console data to the server.
+
+### 2. Desktop version
+
+* **Language:** Python 3
+* **Files:** `nReader.py` (`nReader.exe` for Windows only)
+* **License:** GNU General Public License v3.0 (GPL-3.0)
+* **Functionality:** Offers to display the report, save it locally and/or upload it to the server. Allows forcing a serial number that is different from the NAND one, as well as providing a description. Intended for advanced users and for specific NANDs.
 
 ---
 
@@ -138,3 +139,4 @@ pyinstaller nReader.spec
 * Original code for Wii NAND handling by Ben Wilson (Wii NAND Extractor, 2009), many thanks!
 * Code for filesystem permissions borrowed from Aep's tikdumper, thanks a lot!
 * Thanks to Hallowizer for hallowtools, which inspired this project, and to RedBees for the idea of making it a public project.
+

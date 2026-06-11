@@ -4,6 +4,7 @@
 #include <string.h>
 #include <network.h>
 #include "net.h"
+#include "errors.h"
 
 // variables
 static int ret;
@@ -37,6 +38,8 @@ static char *generateJsonReport(const nandReport *report) {
     sanitizeString(report->serial, sanitizedSerial, sizeof(sanitizedSerial));
     sanitizeString(report->serial, sanitizedNandSerial, sizeof(sanitizedNandSerial));
     sanitizeString(report->username, sanitizedUsername, sizeof(sanitizedUsername));
+    printf("USERNAME!!! \"%s\"", report->username);
+    doStop(0);
     for (u32 i = 0; i < report->count; i++) {
         char entry[512];
         char sId[32], sTitle[32], sTicket[8];

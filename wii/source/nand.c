@@ -28,12 +28,15 @@ SOFTWARE.
 #include <string.h>
 #include <unistd.h>
 #include <malloc.h>
+
 #include <gccore.h>
 #include <gctypes.h>
 #include <ogc/ipc.h>
 #include <ogc/machine/processor.h>
 #include <ogc/es.h>
+
 #include "nand.h"
+#include "errors.h"
 
 // definitions
 #define MEM_PROT 0xd8b420a
@@ -48,11 +51,28 @@ static const int fileMaxSize = 8192;
 static int ret;
 
 // helpers
-static int getConsoleNickname(char *nickname) {
+static int getNickname(char *nickname) {
     if (!nickname)
         return -2;
-    memset(nickname, 0, 11);
-    CONF_GetNickName((u8 *)nickname);
+    FILE* f = fopen("name.txt", "r");
+    if (f == NULL) {
+        crashImpl("Cannot find name.txt in my app folder!");
+    }
+
+    fseek(f, 0, SEEK_END);
+    s64 size = ftell(f);
+    fseek(f, 0, SEEK_SET);
+
+    if (size < 0)
+    {
+        fclose(f);
+        crashImpl("Error reading name.txt from my app folder!");
+    }
+
+    fread(nickname, 1, size, f);
+    nickname[size] = 0;
+
+    fclose(f);
     return 0;
 }
 
@@ -198,7 +218,7 @@ int nandRead(nandReport *dump) {
         return -2;
     dump->entries=NULL;
     dump->count=0;
-    ret = getConsoleNickname(dump->username);
+    ret = getNickname(dump->username);
     if (ret < 0)
         return ret;
     ret = getNandSerial(dump->serial);

@@ -1,12 +1,13 @@
 #ifndef ERRORS_H
 #define ERRORS_H
 
-#include <iostream>
-#include <string>
-#include <map>
-#include <utility>
+#include <string.h>
+#include <stdarg.h>
+#include <stdlib.h>
+
 #include <gccore.h>
 #include <wiiuse/wpad.h>
+
 #include "video.h"
 
 typedef struct {
@@ -37,7 +38,7 @@ static const errorType errorTable[] = {
 };
 static const int errorTableLength = sizeof(errorTable) / sizeof(errorType);
 
-inline const char* getError(int id) {
+static inline const char* getError(int id) {
     for(int i = 0; i < errorTableLength; ++i) {
         if (id == errorTable[i].code) {
             return errorTable[i].name;
@@ -47,27 +48,46 @@ inline const char* getError(int id) {
     return "UNKNOWN_ERROR";
 }
 
-template<typename Func, typename... Args>
-inline void executeHandler(Func func, Args&&... args) {
-    int ret = func(std::forward<Args>(args)...);
-    if (ret < 0) { // failed.
-        printf("failed.\nStop code: %s (%d)\n\nPress RESET, HOME or START to exit.", getError(ret), ret);
-        while (1) {
-            WPAD_ScanPads();
-            PAD_ScanPads();
+static inline void doStop(int err) {
+    while (1) {
+        WPAD_ScanPads();
+        PAD_ScanPads();
 
-            u32 pressedWii = WPAD_ButtonsDown(0);
-            u32 pressedGC = PAD_ButtonsDown(0);
+        u32 pressedWii = WPAD_ButtonsDown(0);
+        u32 pressedGC = PAD_ButtonsDown(0);
 
-            if ((pressedWii & WPAD_BUTTON_HOME) || (pressedGC & PAD_BUTTON_START) || SYS_ResetButtonDown()) {
-                exit(1); 
-            }
-
-            VIDEO_WaitVSync();
+        if ((pressedWii & WPAD_BUTTON_HOME) || (pressedGC & PAD_BUTTON_START) || SYS_ResetButtonDown()) {
+            exit(err); 
         }
-    }
 
-    puts("success.");
+        VIDEO_WaitVSync();
+    }
 }
+static inline void crashImpl(const char* fmt, ...) {
+    char msg[512];
+
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(msg, sizeof(msg), fmt, args);
+    va_end(args);
+
+    printf("failed.\n%s\n\nPress RESET, HOME or START to exit.", msg);
+    doStop(1);
+}
+
+static inline void crashCode(int ret) {
+    crashImpl("Stop code: %s (%d)", getError(ret), ret);
+}
+
+static inline void doAssert(int ret) {
+    if (ret < 0) { // failed.
+        crashCode(ret);
+    }
+}
+
+#define EXECUTE_HANDLER(func, ...) do { \
+    doAssert( func(__VA_ARGS__) ); \
+    puts("success."); \
+} while (0)
 
 #endif

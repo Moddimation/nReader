@@ -28,13 +28,17 @@ void videoInit(void) {
     VIDEO_WaitVSync();
     if (rmode->viTVMode & VI_NON_INTERLACE)
         VIDEO_WaitVSync();
+
+    puts("nReader");
+
     colsOnScreen = (rmode->fbWidth - padding) / FONT_WIDTH;
     linesOnScreen = (rmode->xfbHeight - padding) / FONT_HEIGHT;
-    puts("nReader 2.6\n");
+    colsOnScreen -= 2;
+    consoleSetWindow(NULL, 1, 3, colsOnScreen, linesOnScreen);
+
     for (int i = 0; i < colsOnScreen; i++)
         putchar('-');
     putchar('\n');
-    consoleSetWindow(NULL, 1, 3, colsOnScreen, linesOnScreen);
 }
 
 void videoWait(int duration) {
